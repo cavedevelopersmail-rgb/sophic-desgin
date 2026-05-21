@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Consultancy API Server</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Consultancy API Server</h1>
+      <p>Express.js MongoDB API with Admin Authentication</p>
+      
+      <div class="api-info">
+        <h2>📋 Available Endpoints</h2>
+        
+        <div class="endpoint-group">
+          <h3>🔐 Admin Authentication</h3>
+          <ul>
+            <li><code>POST /api/admin/login</code> - Admin login</li>
+            <li><code>POST /api/admin/logout</code> - Admin logout</li>
+            <li><code>GET /api/admin/profile</code> - Get admin profile</li>
+            <li><code>PUT /api/admin/profile</code> - Update admin profile</li>
+          </ul>
+        </div>
+
+        <div class="endpoint-group">
+          <h3>📄 Terms & Conditions</h3>
+          <ul>
+            <li><code>GET /api/terms</code> - Get terms and conditions</li>
+            <li><code>PUT /api/terms</code> - Update terms (Admin only)</li>
+          </ul>
+        </div>
+
+        <div class="endpoint-group">
+          <h3>🔒 Privacy Policy</h3>
+          <ul>
+            <li><code>GET /api/privacy</code> - Get privacy policy</li>
+            <li><code>PUT /api/privacy</code> - Update privacy policy (Admin only)</li>
+          </ul>
+        </div>
+
+        <div class="endpoint-group">
+          <h3>📝 Blog Management</h3>
+          <ul>
+            <li><code>GET /api/blogs</code> - Get all blogs</li>
+            <li><code>GET /api/blogs/:id</code> - Get single blog</li>
+            <li><code>GET /api/blogs/slug/:slug</code> - Get blog by slug</li>
+            <li><code>POST /api/blogs</code> - Create blog (Admin only)</li>
+            <li><code>PUT /api/blogs/:id</code> - Update blog (Admin only)</li>
+            <li><code>DELETE /api/blogs/:id</code> - Delete blog (Admin only)</li>
+          </ul>
+        </div>
+
+        <div class="endpoint-group">
+          <h3>⭐ Reviews Management</h3>
+          <ul>
+            <li><code>GET /api/reviews</code> - Get all reviews</li>
+            <li><code>GET /api/reviews/stats</code> - Get review statistics</li>
+            <li><code>GET /api/reviews/:id</code> - Get single review</li>
+            <li><code>POST /api/reviews</code> - Create review (Public)</li>
+            <li><code>PUT /api/reviews/:id</code> - Update review (Admin only)</li>
+            <li><code>DELETE /api/reviews/:id</code> - Delete review (Admin only)</li>
+          </ul>
+        </div>
+
+        <div class="endpoint-group">
+          <h3>🏥 System</h3>
+          <ul>
+            <li><code>GET /api/health</code> - Health check</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="setup-info">
+        <h2>⚙️ Setup Instructions</h2>
+        <ol>
+          <li>Create an admin user in MongoDB manually or through a script</li>
+          <li>Use <code>POST /api/admin/login</code> to authenticate</li>
+          <li>Include the JWT token in Authorization header: <code>Bearer &lt;token&gt;</code></li>
+          <li>Access protected endpoints with the token</li>
+        </ol>
+      </div>
+
+      <div class="features">
+        <h2>✨ Features</h2>
+        <ul>
+          <li>JWT-based authentication</li>
+          <li>Session management</li>
+          <li>Base64 image storage for blogs</li>
+          <li>Review rating system</li>
+          <li>Pagination support</li>
+          <li>Input validation</li>
+          <li>Error handling</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
