@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ServiceDetailDynamic from "./user/components/service/ServiceDetailDynamic";
 import ServicesPage from "./user/components/ServicesPage";
 import ScrollToTop from "./components/ScrollToTop";
+import LayoutSeo from "./components/LayoutSeo";
 import Leaders from "./components/admin/pages/Leaders";
 import Privacy from "./user/components/Privacy";
 import Terms from "./user/components/Terms";
@@ -47,6 +48,7 @@ const LandingPageLayout = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="w-full flex-1 min-w-0 overflow-x-hidden pt-[var(--site-header-height)]">
+        <LayoutSeo />
         <Outlet />
       </main>
       <Footer />

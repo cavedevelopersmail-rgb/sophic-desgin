@@ -1,0 +1,17 @@
+{
+  "name": "Sophic Designs Pvt. Ltd. — MEP Consultants",
+  "short_name": "Sophic Designs",
+  "description": "Mechanical, Electrical & Plumbing consultancy for hospitals, hotels, datacenters, residential and infrastructure across India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#00353E",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

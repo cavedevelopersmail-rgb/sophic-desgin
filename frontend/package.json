@@ -1,7 +1,8 @@
 {
-  "name": "vite-react-starter",
+  "name": "sophic-designs-web",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Sophic Designs Pvt. Ltd. — public website (MEP consultants Delhi NCR)",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
+import PageSeo from "../../../components/PageSeo";
+import { DEFAULT_DESCRIPTION, SITE_NAME_FULL, getSiteOrigin } from "../../../constants/siteMeta";
 import { motion } from "framer-motion";
 import { ChevronRight, ArrowLeft, LayoutGrid } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
@@ -152,8 +154,22 @@ function PageBackdrop({ themeKey }) {
   );
 }
 
+function buildServiceSchema(service, pathname) {
+  const origin = getSiteOrigin();
+  const url = origin && pathname ? `${origin}${pathname}` : undefined;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.title,
+    description: (service.shortDescription || "").slice(0, 280) || DEFAULT_DESCRIPTION,
+    provider: { "@type": "Organization", name: SITE_NAME_FULL },
+    ...(url ? { url } : {}),
+  };
+}
+
 const ServiceDetailDynamic = () => {
   const { id, slug } = useParams();
+  const { pathname } = useLocation();
   const { getServiceBySlug, getServiceById } = useAuth();
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -191,45 +207,61 @@ const ServiceDetailDynamic = () => {
 
   if (loading) {
     return (
-      <div className="relative min-h-[50vh] overflow-hidden">
-        <PageBackdrop themeKey="theme1" />
-        <div className="container-custom relative py-14 md:py-18">
-          <div className="mb-8 h-3 w-40 animate-pulse rounded bg-stone-200" />
-          <div className="grid gap-10 lg:grid-cols-2">
-            <div className="space-y-3">
-              <div className="h-10 w-4/5 animate-pulse rounded-lg bg-stone-200" />
-              <div className="h-3.5 w-full animate-pulse rounded bg-stone-200" />
-              <div className="h-3.5 w-full animate-pulse rounded bg-stone-200" />
-              <div className="h-3.5 w-3/4 animate-pulse rounded bg-stone-200" />
+      <>
+        <PageSeo
+          title="MEP service"
+          description={DEFAULT_DESCRIPTION}
+          pathname={pathname}
+          noIndex
+        />
+        <div className="relative min-h-[50vh] overflow-hidden">
+          <PageBackdrop themeKey="theme1" />
+          <div className="container-custom relative py-14 md:py-18">
+            <div className="mb-8 h-3 w-40 animate-pulse rounded bg-stone-200" />
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div className="space-y-3">
+                <div className="h-10 w-4/5 animate-pulse rounded-lg bg-stone-200" />
+                <div className="h-3.5 w-full animate-pulse rounded bg-stone-200" />
+                <div className="h-3.5 w-full animate-pulse rounded bg-stone-200" />
+                <div className="h-3.5 w-3/4 animate-pulse rounded bg-stone-200" />
+              </div>
+              <div className="h-[280px] animate-pulse rounded-xl bg-stone-200/80" />
             </div>
-            <div className="h-[280px] animate-pulse rounded-xl bg-stone-200/80" />
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!service) {
     return (
-      <div className="relative min-h-[60vh] overflow-hidden">
-        <PageBackdrop themeKey="theme1" />
-        <div className="container-custom relative flex flex-col items-center justify-center py-24 text-center">
-          <div className="max-w-md rounded-xl border border-stone-200 bg-white px-8 py-10 shadow-sm">
-            <LayoutGrid className="mx-auto mb-4 h-9 w-9 text-stone-500" strokeWidth={1.25} />
-            <h1 className="text-lg font-semibold text-stone-900">Service not found</h1>
-            <p className="mt-2 text-sm text-stone-600">
-              This page may have moved or the link is outdated.
-            </p>
-            <Link
-              to="/services"
-              className="mt-6 inline-flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 transition hover:bg-stone-50"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              View all services
-            </Link>
+      <>
+        <PageSeo
+          title="Service not found"
+          description="The requested MEP service could not be found. Browse all services from Sophic Designs."
+          pathname={pathname}
+          noIndex
+        />
+        <div className="relative min-h-[60vh] overflow-hidden">
+          <PageBackdrop themeKey="theme1" />
+          <div className="container-custom relative flex flex-col items-center justify-center py-24 text-center">
+            <div className="max-w-md rounded-xl border border-stone-200 bg-white px-8 py-10 shadow-sm">
+              <LayoutGrid className="mx-auto mb-4 h-9 w-9 text-stone-500" strokeWidth={1.25} />
+              <h1 className="text-lg font-semibold text-stone-900">Service not found</h1>
+              <p className="mt-2 text-sm text-stone-600">
+                This page may have moved or the link is outdated.
+              </p>
+              <Link
+                to="/services"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-sm font-medium text-stone-800 transition hover:bg-stone-50"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                View all services
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -268,8 +300,23 @@ const ServiceDetailDynamic = () => {
     </div>
   );
 
+  const description =
+    (service.shortDescription && service.shortDescription.slice(0, 160)) ||
+    (service.longDescription || "").replace(/\s+/g, " ").trim().slice(0, 160) ||
+    DEFAULT_DESCRIPTION;
+
   return (
-    <section className="relative overflow-x-hidden pb-16 pt-8 md:pb-20 md:pt-12">
+    <>
+      <PageSeo
+        title={service.title}
+        description={description}
+        pathname={pathname}
+        image={service.image?.url || undefined}
+        keywords={`${service.title}, MEP consultancy, Sophic Designs, HVAC electrical plumbing`}
+        type="article"
+        jsonLd={buildServiceSchema(service, pathname)}
+      />
+      <section className="relative overflow-x-hidden pb-16 pt-8 md:pb-20 md:pt-12">
       <PageBackdrop themeKey={themeKey} />
 
       <div className="container-custom relative max-w-6xl">
@@ -387,6 +434,7 @@ const ServiceDetailDynamic = () => {
         ) : null}
       </div>
     </section>
+    </>
   );
 };
 
