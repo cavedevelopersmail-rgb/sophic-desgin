@@ -29,7 +29,7 @@ connectDB()
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL ,
+    origin: "https://sophic-desgin-88pd-git-main-sophicdesigns-projects.vercel.app" ,
     credentials: true,
   })
 );
