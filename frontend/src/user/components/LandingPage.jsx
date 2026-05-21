@@ -47,8 +47,8 @@ const LandingPage = () => {
         setLoadingLogos(true);
         const response = await getLogos();
 
-        // Filter only active logos and map to required format
-        const activeLogos = response.data.logos
+        const list = Array.isArray(response?.data?.logos) ? response.data.logos : [];
+        const activeLogos = list
           .filter((logo) => logo.status === "active")
           .map((logo) => ({
             id: logo._id,
@@ -76,8 +76,8 @@ const LandingPage = () => {
         setLoadingReviews(true);
         const response = await getReviews();
 
-        // Get first 3 reviews (remove status filter)
-        const reviewsToShow = response.data.reviews.slice(0, 3);
+        const list = Array.isArray(response?.data?.reviews) ? response.data.reviews : [];
+        const reviewsToShow = list.slice(0, 3);
 
         setReviews(reviewsToShow);
         setReviewError(false);

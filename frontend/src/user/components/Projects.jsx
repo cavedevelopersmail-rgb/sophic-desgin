@@ -20,21 +20,23 @@ const Projects = () => {
     const fetchProjects = async () => {
       try {
         const response = await getProjects();
-        const mappedProjects = response?.data?.projects?.map((project) => ({
-          id: project.id,
-          title: project.title,
-          location: project.location,
-          year: project.year,
-          category: project.category,
-          image: project.images?.[0]?.url || "",
-          description: project.description,
-          highlights: project.highlights || [],
-          scope: project.scope,
-          value: project.value,
-          isFeatured: project.featured,
-        }));
+        const raw = response?.data?.projects;
+        const mappedProjects = Array.isArray(raw)
+          ? raw.map((project) => ({
+              id: project.id,
+              title: project.title,
+              location: project.location,
+              year: project.year,
+              category: project.category,
+              image: project.images?.[0]?.url || "",
+              description: project.description,
+              highlights: project.highlights || [],
+              scope: project.scope,
+              value: project.value,
+              isFeatured: project.featured,
+            }))
+          : [];
 
-        // Filter featured projects
         const featured = mappedProjects.filter((project) => project.isFeatured);
 
         setProjects(mappedProjects);
@@ -52,16 +54,18 @@ const Projects = () => {
   }, [getProjects]);
 
   const nextSlide = () => {
+    if (!featuredProjects.length) return;
     setCurrentSlide((prev) => (prev + 1) % featuredProjects.length);
   };
 
   const prevSlide = () => {
+    if (!featuredProjects.length) return;
     setCurrentSlide(
       (prev) => (prev - 1 + featuredProjects.length) % featuredProjects.length
     );
   };
 
-  const currentProject = featuredProjects[currentSlide];
+  const currentProject = featuredProjects.length ? featuredProjects[currentSlide] : null;
 
   if (loading) {
     return (

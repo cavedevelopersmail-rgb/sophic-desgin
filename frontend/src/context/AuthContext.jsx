@@ -12,12 +12,31 @@ import axios from "axios";
 // Create Auth Context
 export const AuthContext = createContext();
 
+/** Must be full backend URL including `/api` (e.g. http://localhost:3010/api). If unset or wrong in production, the static host returns index.html as JSON-like 200 responses. */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (typeof import.meta.env.DEV !== "undefined" && import.meta.env.DEV && !API_BASE_URL?.trim()) {
+  console.warn(
+    "[Sophic] VITE_API_BASE_URL is not set — API requests go to this dev origin; set it in frontend/.env (see .env.example)."
+  );
+}
+
+if (import.meta.env.PROD && !API_BASE_URL?.trim()) {
+  console.error(
+    "[Sophic] VITE_API_BASE_URL missing in production build. API routes will resolve to your static HTML host unless you configure a rewrite/proxy."
+  );
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
+
+function responseLooksLikeHtml(data) {
+  if (typeof data !== "string" || data.length < 14) return false;
+  const head = data.trimStart().slice(0, 80);
+  return head.toLowerCase().startsWith("<!doctype html") || /^<html[\s>]/i.test(head);
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -60,15 +79,33 @@ export const AuthProvider = ({ children }) => {
   // Set logout reference during render
   logoutRef.current = logout;
 
-  // Add response interceptor to handle token expiration
+  // Reject SPA index.html payloads (misconfigured proxy / missing VITE_API_BASE_URL); handle 401
   useEffect(() => {
     const interceptor = api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        if (responseLooksLikeHtml(response?.data)) {
+          const attempted = `${response.config?.baseURL || ""}${response.config?.url || ""}`;
+          console.error(
+            "[Sophic API] Received an HTML document instead of JSON. Typical fix: set VITE_API_BASE_URL in frontend/.env to your deployed API origin (must include /api path), then rebuild. Request:",
+            attempted || "(relative)"
+          );
+          return Promise.reject(
+            new Error(
+              "Backend URL misconfiguration: API returned HTML. Set VITE_API_BASE_URL to your Express API base (example: https://your-api.com/api) and redeploy."
+            )
+          );
+        }
+        return response;
+      },
       (error) => {
         const requestUrl = error.config?.url || "";
+        const body = error.response?.data;
+        if (typeof body === "string" && responseLooksLikeHtml(body)) {
+          console.error("[Sophic API] Error response body is HTML — check VITE_API_BASE_URL.");
+        }
+
         const isAuthEndpoint =
-          requestUrl.includes("/admin/login") ||
-          requestUrl.includes("/admin/logout");
+          requestUrl.includes("/admin/login") || requestUrl.includes("/admin/logout");
 
         if (error.response?.status === 401 && !isAuthEndpoint) {
           logoutRef.current({ skipServerLogout: true });

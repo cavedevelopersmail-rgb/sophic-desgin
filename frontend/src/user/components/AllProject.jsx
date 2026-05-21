@@ -12,18 +12,20 @@ const AllProject = () => {
     const fetchProjects = async () => {
       try {
         const response = await getProjects();
-        console.log("------------------------>>>>>>>>>>>>>>>>", response);
-        const mappedProjects = response?.data?.projects?.map((project) => ({
-          name: project.title,
-          location: project.location,
-          year: project.year,
-          type: project.category,
-          image: project.images?.[0]?.url || "",
-          details: project.description,
-          innovation: project.highlights?.[0] || "",
-          features: project.highlights || [],
-          isFeatured: project.featured,
-        }));
+        const raw = response?.data?.projects;
+        const mappedProjects = Array.isArray(raw)
+          ? raw.map((project) => ({
+              name: project.title,
+              location: project.location,
+              year: project.year,
+              type: project.category,
+              image: project.images?.[0]?.url || "",
+              details: project.description,
+              innovation: project.highlights?.[0] || "",
+              features: project.highlights || [],
+              isFeatured: project.featured,
+            }))
+          : [];
         setProjects(mappedProjects);
       } catch (err) {
         setError("Failed to load projects. Please try again later.");
