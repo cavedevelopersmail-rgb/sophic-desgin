@@ -4,6 +4,7 @@ const session = require("express-session");
 const cors = require("cors");
 const path = require("path");
 const connectDB = require("./config/db");
+const { corsOptions } = require("./config/cors");
 
 // Import routes
 const adminRoutes = require("./routes/adminRoutes");
@@ -27,12 +28,7 @@ connectDB()
   .catch((error) => console.error("Theme seed failed:", error.message));
 
 // Middleware
-app.use(
-  cors({
-    origin: "https://sophic-desgin-88pd-git-main-sophicdesigns-projects.vercel.app" ,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
